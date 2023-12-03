@@ -62,7 +62,7 @@ commit-manifests:
     - apk add --no-cache curl git bash
     - curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
     - mv kustomize /usr/local/bin/
-    - echo "registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops/main:$CI_COMMIT_SHA" > updated-image-tag
+    - echo "registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops/main:$CI_COMMIT_SHA" > updated-image-tag
     - git config --global user.email "adess@gitlab.com"
     - git config --global user.name "@project_44576698_bot_e5a0cb5670cd3595dcf14f0faf9d580a"
   script:
@@ -71,7 +71,7 @@ commit-manifests:
     - git fetch gitlab_origin main
     - git checkout -b main gitlab_origin/main
     - rm -rf prod/
-    - kustomize edit set image registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops=registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops:"$(cat ../updated-image-tag)"
+    - kustomize edit set image registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops=registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops:"$(cat ../updated-image-tag)"
     - kustomize edit set namespace prod
     - mkdir -p prod
     - kustomize build . > prod/k8s-deployment.yaml
@@ -99,7 +99,7 @@ deploy_prod:
     - apk add --no-cache curl git bash
     - curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
     - mv kustomize /usr/local/bin/
-    - echo "registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops/main:$CI_COMMIT_SHA" > updated-image-tag
+    - echo "registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops/main:$CI_COMMIT_SHA" > updated-image-tag
     - git config --global user.email "adess@gitlab.com"
     - git config --global user.name "@project_44576698_bot_e5a0cb5670cd3595dcf14f0faf9d580a"
   script:
@@ -108,7 +108,7 @@ deploy_prod:
     - git fetch gitlab_origin main
     - git checkout -b main gitlab_origin/main
     - rm -rf prod/
-    - kustomize edit set image registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops=registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops:"$(cat ../updated-image-tag)"
+    - kustomize edit set image registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops=registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops:"$(cat ../updated-image-tag)"
     - kustomize edit set namespace prod
     - mkdir -p prod
     - kustomize build . > prod/k8s-deployment.yaml
@@ -138,7 +138,7 @@ review_deploy:
     - apk add --no-cache curl git bash
     - curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
     - mv kustomize /usr/local/bin/
-    - echo "registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops/main:$CI_COMMIT_SHA" > updated-image-tag
+    - echo "registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops/main:$CI_COMMIT_SHA" > updated-image-tag
     - git config --global user.email "adess@gitlab.com"
     - git config --global user.name "@project_44576698_bot_e5a0cb5670cd3595dcf14f0faf9d580a"
   script:
@@ -147,7 +147,7 @@ review_deploy:
     - git fetch gitlab_origin review
     - git checkout -b review gitlab_origin/review
     - rm -rf review/$CI_COMMIT_REF_SLUG
-    - kustomize edit set image registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops=registry.gitlab.com/adess-demos/demo/app-team/catweb-gitops:"$(cat ../updated-image-tag)"
+    - kustomize edit set image registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops=registry.gitlab.com/adess-demos/demo/gitops/catweb-gitops:"$(cat ../updated-image-tag)"
     - kustomize edit set namespace review-$CI_COMMIT_REF_SLUG
     - mkdir -p review/$CI_COMMIT_REF_SLUG
     - kustomize build . > review/$CI_COMMIT_REF_SLUG/k8s-deployment.yaml
