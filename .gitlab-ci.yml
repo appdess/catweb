@@ -19,6 +19,10 @@ stages:
 #variables:
 #  DAST_WEBSITE: https://prod.catweb.gitops.fun
 
+include:
+- remote: https://gitlab.com/poffey21/sonarscanner/raw/master/Sonar.gitlab-ci.yml
+
+
 test:
   stage: test
   image: golang:latest
