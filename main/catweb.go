@@ -1,8 +1,6 @@
 package main
 
 import (
-	_ "io"
-	"github.com/Unleash/unleash-client-go/v3"
 	"fmt"
 	"html/template"
 	"log"
@@ -10,18 +8,19 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/Unleash/unleash-client-go/v3"
 )
 
-type metricsInterface struct {
-}
+type metricsInterface struct{}
 
 func init() {
-    unleash.Initialize(
-        unleash.WithUrl("https://gitlab.com/api/v4/feature_flags/unleash/40951967"),
-        unleash.WithInstanceId("8bZJ99faxtsW3anLf2ak"),
-        unleash.WithAppName("production"), // Set to the running environment of your application
-        unleash.WithListener(&metricsInterface{}),
-    )
+	unleash.Initialize(
+		unleash.WithUrl("https://gitlab.com/api/v4/feature_flags/unleash/40951967"),
+		unleash.WithInstanceId("8bZJ99faxtsW3anLf2ak"),
+		unleash.WithAppName("production"), // Set to the running environment of your application
+		unleash.WithListener(&metricsInterface{}),
+	)
 }
 
 func main() {
@@ -39,7 +38,7 @@ func Random(min, max int) int {
 }
 
 func CatHandler(w http.ResponseWriter, r *http.Request) {
-	//Fetch hostname of container
+	// Fetch hostname of container
 	name, err := os.Hostname()
 	if err != nil {
 		panic(err)
@@ -48,28 +47,33 @@ func CatHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable Grumpy Cat Feature Flag
 	var catpic int
 	var message string
-	if unleash.IsEnabled("grumpy-cat"){
+	if unleash.IsEnabled("grumpy-cat") {
 		catpic = Random(11, 15)
 		message = "Grumpy Cat Feature Flag Enabled"
 	} else {
-        catpic = Random(1, 10)
+		catpic = Random(1, 10)
 		message = "Grumpy Cat is Off - Have Fun :)"
 	}
 
-	//Parse index.html template
+	// Introduce XSS Vulnerability
+	userInput := r.URL.Query().Get("userInput") // Get user input from query parameter
+
+	// Parse index.html template
 	t, err := template.ParseFiles("index.html")
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	items := struct {
-		Url      int
-		Hostname string
-		Message string
+		Url       int
+		Hostname  string
+		Message   string
+		UserInput string // Add UserInput to the data passed to the template
 	}{
-		Url:      catpic,
-		Hostname: name,
-		Message: message,
+		Url:       catpic,
+		Hostname:  name,
+		Message:   message,
+		UserInput: userInput, // Pass the unescaped user input to the template
 	}
 
 	t.Execute(w, items)
