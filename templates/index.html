@@ -26,6 +26,13 @@
       <h4>Welcome to Gitlab! {{.Message}}</h4>
       <img src="static/{{.Url}}.gif">
       <p>Container ID: {{.Hostname}} </p>
+      <p>
+        <form method="GET">
+          <label for="grumpy">Toggle Grumpy Cat:</label>
+          <input type="checkbox" id="grumpy" name="grumpy" value="true" {{if .Grumpy}}checked{{end}}>
+          <button type="submit">Update</button>
+        </form>
+      </p>
       <p><small>Courtesy: <a href="http://www.buzzfeed.com/copyranter/the-best-cat-gif-post-in-the-history-of-cat-gifs">Buzzfeed</a></small></p>
     </div>
   </body>
