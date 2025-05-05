@@ -44,13 +44,36 @@ func CatHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	// Enable Grumpy Cat Feature Flag
+	// Check if user has toggled grumpy cat preference
+	grumpyParam := r.URL.Query().Get("grumpy")
+	
+	// Check if the form was submitted (any button clicked)
+	_, formSubmitted := r.URL.Query()["grumpy"]
+	formSubmitted = formSubmitted || r.URL.Query().Has("submit")
+	
+	// Enable Grumpy Cat based on user preference or feature flag
 	var catpic int
 	var message string
-	if unleash.IsEnabled("grumpy-cat") {
+	var isGrumpy bool
+	
+	// If user explicitly toggled grumpy cats ON
+	if grumpyParam == "true" {
+		isGrumpy = true
+		catpic = Random(11, 15)
+		message = "Grumpy Cat Mode Enabled by User"
+	} else if formSubmitted {
+		// User explicitly wants non-grumpy cats (checkbox unchecked but form submitted)
+		isGrumpy = false
+		catpic = Random(1, 10)
+		message = "Grumpy Cat Mode Disabled by User"
+	} else if unleash.IsEnabled("grumpy-cat") {
+		// No user preference, fall back to feature flag
+		isGrumpy = true
 		catpic = Random(11, 15)
 		message = "Grumpy Cat Feature Flag Enabled"
 	} else {
+		// Default case - no user preference, feature flag off
+		isGrumpy = false
 		catpic = Random(1, 10)
 		message = "Grumpy Cat is Off - Have Fun :)"
 	}
@@ -69,11 +92,13 @@ func CatHandler(w http.ResponseWriter, r *http.Request) {
 		Hostname  string
 		Message   string
 		UserInput string // Add UserInput to the data passed to the template
+		Grumpy    bool   // Add Grumpy field to track if grumpy cats are enabled
 	}{
 		Url:       catpic,
 		Hostname:  name,
 		Message:   message,
 		UserInput: userInput, // Pass the unescaped user input to the template
+		Grumpy:    isGrumpy,  // Set the Grumpy state for the template
 	}
 
 	t.Execute(w, items)
